@@ -1,1 +1,1 @@
-# Programacao_em_R
+# Programação na Linguagem R para disciplina de Análise Exploratória 
