@@ -1,0 +1,141 @@
+---
+title: "Aula_04"
+author: "Bernardo Boé"
+date: "2023-08-22"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Grammar of graphics:ggplot2
+A base que será utilizada é a base do GapMinder que está disponível no site da UBC.
+
+```{r}
+library(tidyverse)
+
+dados = read_delim(file="https://www.stat.ubc.ca/~jenny/notOcto/STAT545A/examples/gapminder/data/gapminderDataFiveYear.txt",
+                    delim="\t")
+
+knitr::kable(head(dados), caption = "GapMinder 5 years")
+
+
+```
+Os dadosdesta basesão dados longitudinais. O mesmo país aparecerá 12 vezes: de 1952 a 2007.
+
+Para usarmos os dados mais atuais, vamos aplicar um filtro e ficar só com os dados de 2007.
+
+```{r}
+library(knitr)
+dados_2007 = dados %>%
+  filter(year == '2007')
+kable(head(dados_2007),caption = "Dados de 2007")
+
+```
+
+### Gráficos simples
+
+Qualquer gráfico dentro do pacote GGPLOT2 necessita de três elementos: 
+
+1) Dados,
+
+2) Algum mapeamento estético (aesthetic mappings, abreviado como “aes”) entre as variáveis e propriedades visuais dos gráficos.
+
+3) Pelo menos uma camada que descreva como as observações serão apresentadas. Essas camadas são construídas com base em funções chamadas de geometrias, abreviadas por “geom”. 
+
+```{r}
+ggplot(dados_2007, aes(x=continent, fill=continent)) +
+  geom_bar()+
+  labs(title = "Países por continente",
+      x="",
+      y="Contagem",
+      fill = "Continentes")+
+  scale_fill_brewer(palette = "Blues")+
+  theme_classic()+
+  guides(fill="none")
+```
+
+Cada camada inserida deve vir após o sinal de +. A última camada não pode ser seguida de um sinal de +.
+
+```{r}
+ggplot(dados_2007, aes(y = lifeExp, x = continent, fill = continent))+
+  geom_boxplot()+
+labs(title = "Expectativa de vida por continente",
+      x="",
+      y="Expectativa de Vida",
+      fill = "Continentes")+
+  scale_fill_brewer(palette = "Greens")+
+  theme_classic()+
+  guides(fill="none")
+```
+
+O diagrama de dispersão pode ser muito bem aproveitado pelo GGPLOT
+
+```{r}
+ggplot(dados_2007, aes(x=gdpPercap,y= lifeExp, color = continent))+
+geom_point(size = 2, alpha = 0.7)+
+  labs(title = "Expectativa de vida por PIB per capita",
+       subtitle = "Dados de 2007",
+      x="PIB per capita",
+      y="Expectativa de Vida - em anos",
+      color = "Continentes")+
+  theme_classic()
+
+
+```
+Outras visualizações
+
+```{r}
+dados_2= filter (dados, country == c("Argentina", "Brazil", "Mexico"))
+ggplot(dados_2, aes( x = year, y= gdpPercap, color = country)) +
+  geom_line(size = 2)+
+   labs(title = "PIB per capita ao longo dos anos",
+       subtitle = "Dados de 1952 a 2007",
+       x="Anos",
+       y="PIB per capita")
+```
+
+Colocando tudo junto
+
+```{r, message = FALSE, echo = FALSE}
+g1 = ggplot(dados_2007, aes(x=gdpPercap,y= lifeExp, color = continent))+
+geom_point(size = 2, alpha = 0.7)+
+  labs(title = "Expectativa de vida por PIB per capita",
+       subtitle = "Dados de 2007",
+      x="PIB per capita",
+      y="Expectativa de Vida - em anos",
+      color = "Continentes")+
+  theme_classic()
+
+g2 = ggplot(dados_2, aes( x = year, y= gdpPercap, color = country)) +
+  geom_line(size = 2)+
+   labs(title = "PIB per capita ao longo dos anos",
+       subtitle = "Dados de 1952 a 2007",
+       x="Anos",
+       y="PIB per capita")
+
+g3 = ggplot(dados_2007, aes(x=continent, fill=continent)) +
+  geom_bar()+
+  labs(title = "Países por continente",
+      x="",
+      y="Contagem",
+      fill = "Continentes")+
+  scale_fill_brewer(palette = "Blues")+
+  theme_classic()+
+  guides(fill="none")
+
+g4 = ggplot(dados_2007, aes(y = lifeExp, x = continent, fill = continent))+
+  geom_boxplot()+
+labs(title = "Expectativa de vida por continente",
+      x="",
+      y="Expectativa de Vida",
+      fill = "Continentes")+
+  scale_fill_brewer(palette = "Greens")+
+  theme_classic()+
+  guides(fill="none")
+
+library(gridExtra)
+grid.arrange(g1,g2,g3,g4, ncol = 2)
+
+```
