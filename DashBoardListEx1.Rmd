@@ -1,0 +1,93 @@
+---
+title: "DashBoard Lista 1"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    social: menu
+    source_code: embed
+runtime: shiny
+---
+
+```{r global, include=FALSE}
+library(readxl)
+library(tidyverse)
+
+setwd("C:/Users/BERNARDO.CASTILLO/Documents/4oPeriodo/AnaliseExploratoria")
+dados = read_excel("Lista_de_exercicios_1.xlsx", sheet ="Weekly Visits")
+dados2 = select(dados, "Week (2008-2009)", "Period", "Avg. Time on Site (secs.)", "Profit")
+
+dados3 = rename(dados2, Semana = "Week (2008-2009)",
+                Periodo =  "Period", 
+                Tempo_no_site =  "Avg. Time on Site (secs.)", 
+                Lucro = "Profit")
+
+dados3 <- select(dados3, Semana ,
+                Periodo, 
+                Tempo_no_site, 
+                Lucro)
+
+```
+
+
+```{r}
+# Reactive that returns the whole dataset if there is no brush
+selectedData <- reactive({
+  data <- brushedPoints(dados3, input$plot_brush)
+  if (nrow(data) == 0)
+    data <- dados3
+  data
+})
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Lucro por Periodo {data-width=600}
+
+```{r}
+library(ggplot2)
+renderPlot({
+  
+
+ggplot(dados3, aes(x=Tempo_no_site,y= Lucro, color = Periodo))+
+geom_point(size = 2, alpha = 0.7)+
+  labs(title = "Lucro por Periodo",
+       subtitle = "Quality Alloys",
+      x="Tempo no Site",
+      y="Lucro",
+      color = "Periodo")+
+  theme_classic()
+
+
+  }, outputArgs = list(brush = brushOpts(id = "plot_brush")))
+```
+
+### Lucro po Periodo
+
+```{r}
+renderPlot({
+  
+ggplot(selectedData(), aes(y = Lucro, x = Periodo, fill = Periodo))+
+  geom_boxplot()+
+labs(title = "Lucro por Periodo",
+      x="Periodo",
+      y=" Lucro",
+      fill = "Periodo")+
+  scale_fill_brewer(palette = "Greens")+
+  theme_classic()+
+  guides(fill="none")
+
+  
+})
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Periodo tabela {data-width=400}
+
+```{r}
+renderTable({
+  selectedData()
+})
+```
