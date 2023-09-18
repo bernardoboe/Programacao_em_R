@@ -1,0 +1,101 @@
+
+---
+title: "Atividade 1 - Análise Exploratória"
+runtime: shiny
+output: 
+  html_document:
+    code_folding: show
+    theme:
+      color-contrast-warnings: false
+      bg: "#202123"
+      fg: "#B8BCC2"
+      primary: "#EA80FC"
+      secondary: "#00DAC6"
+      base_font:
+        google: Prompt
+      heading_font:
+        google: Proza Libre
+---
+
+```{r setup, include=FALSE}
+bslib::bs_themer()
+if (requireNamespace("thematic")) 
+  thematic::thematic_rmd(font = "auto")
+```
+
+```{r global, include=FALSE}
+
+library(tidyverse)
+
+setwd("C:/Users/BERNARDO.CASTILLO/Documents/4oPeriodo/AnaliseExploratoria")
+
+tabela = readxl::read_xlsx("Atividade1_TI4A.xlsx", sheet = "EaD")
+
+tabela2 = tabela %>%
+  filter(`Q2` == "Sim") %>%
+  select("Q4")
+
+tabela3 = tabela %>%
+  filter(`Q2` == "Sim")%>%
+  select("Q6", "Q10")
+
+tabela4 = select(tabela, "Q1", "Q2")
+
+```
+
+```{r, echo=FALSE}
+
+# Reactive that returns the whole dataset if there is no brush
+selectedData <- reactive({
+  data <- brushedPoints(tabela3, input$plot_brush)
+  if (nrow(data) == 0)
+    data <- tabela3
+  data
+})
+
+```
+
+### Diagrama que representa como a quantidade de semestres em EaD influencia a avaliação desse método de ensino nas respectivas faculdades {data-width=500}
+
+```{r, message = FALSE}
+
+library(ggplot2)
+renderPlot({
+
+set.seed(123)
+
+ggplot(tabela3, aes(x = Q6, y = Q10, color = Q6)) + geom_jitter() + labs(title = "Avaliacao do EaD por quantidade de semestre", x = "Semestre", y = "Notas 0 a 10", col = "Semestre") + theme_classic()
+  
+  
+}, outputArgs = list(brush = brushOpts(id = "plot_brush")))
+```
+
+```{r}
+
+renderTable({
+  selectedData()
+})
+
+
+```
+
+
+### Diagrama que representa idades de pessoas que já utilizaram ou não o método de ensino EaD
+
+```{r}
+renderPlot({
+  
+  ggplot(tabela4, aes(y = Q1, x = Q2, fill = Q2)) + geom_boxplot() + labs(title = "Idades de pessoas que ja frequentaram ou nao o EaD", y = "Idade em anos", x = "Ja frequentou o EaD?") + scale_fill_brewer(palette = "Oranges") + theme_classic() + guides(fill = "none")
+  
+})
+```
+
+### Gráfico que representa, por regiões de São Paulo, quantas pessoas que utilizam ou já utilizaram o método EaD
+
+```{r}
+renderPlot({
+  
+  ggplot(tabela2, aes(x = Q4, fill = Q4)) + geom_bar() + labs(title = "Número de pessoas que usam o método EaD por região", x = "", y ="Quantidade de pessoas") + guides(fill = "none")
+  
+})
+```
