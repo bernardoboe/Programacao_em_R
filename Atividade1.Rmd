@@ -1,0 +1,101 @@
+---
+title: "Atividade1"
+author: "Bernardo Boé"
+date: "2023-09-18"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE}
+
+setwd("C:/Users/BERNARDO.CASTILLO/Documents/4oPeriodo/AnaliseExploratoria")
+
+tabela = readxl::read_xlsx("Atividade1_TI4A.xlsx", sheet = "EaD")
+
+
+```
+#
+
+## Integrantes
+
+- Bernardo Boé 
+- Ettore Coletti
+- Leonardo Miri
+
+##### Esse arquivo se trata da primeira atividade do semestre da disciplina de Análise Exploratória, ministrada pelo professor CLEBER DA COSTA FIGUEIREDO. Nosso grupo ficou responsável de analisar a base de dados referente ao Ead (ensino a distância), a qual possui perguntas como:
+
+- Quantos anos você tem?
+- Qual é seu e-mail?
+- Você estuda ou já estudou por EAD (ensino a distância)?
+- Você se identifica com qual gênero?
+- Qual região de São Paulo você reside?
+- Qual região de São Paulo você estuda?
+- Quantos semestres você cursou no EAD?
+- Você diria que seu rendimento:
+- Quais são as maiores dificuldades encontradas por você no funcionamento do EAD?
+- Você continua utilizando o sistema EAD depois da pandemia?
+- De 0 a 10, como você avalia o EAD na sua faculdade?
+- Onde você fez EAD?
+
+## Gráfico de barras
+
+- Definição: Um gráfico de barras é uma ferramenta de visualização de dados útil e polivalente que representa graficamente os dados usando barras retangulares. Os gráficos de barras podem ser representados horizontal ou verticalmente, empilhados ou agrupados e são perfeitos para mostrar dados em várias categorias
+
+- Gráfico que representa, por regiões de São Paulo, quantas pessoas que utilizam ou já utilizaram o método EaD
+
+```{r, message=FALSE}
+
+library(tidyverse)
+
+tabela2 = tabela %>%
+  filter(`Q2` == "Sim") %>%
+  select("Q4")
+
+ggplot(tabela2, aes(x = Q4, fill = Q4)) + geom_bar() + labs(title = "Número de pessoas que usam o método EaD por região", x = "", y ="Quantidade de pessoas") + guides(fill = "none")
+
+
+```
+
+## Diagrama de dispersão
+
+- Definição: O diagrama de dispersão é uma ferramenta gráfica que permite visualizarmos com clareza a correlação entre duas variáveis nos negócios de uma empresa. Muito utilizada como uma ferramenta de qualidade, o diagrama aponta tendências e padrões
+
+- Diagrama que representa como a quantidade de semestres em EaD influencia a avaliação desse método de ensino nas respectivas faculdades
+
+```{r}
+
+tabela3 = tabela %>%
+  filter(`Q2` == "Sim")%>%
+  select("Q6", "Q10")
+set.seed(123)
+ggplot(tabela3, aes(x = Q6, y = Q10, color = Q6)) + geom_jitter() + labs(title = "Avaliação do EaD por quantidade de semestre", x = "Semestre", y = "Notas 0 a 10", col = "Semestre")
+
+
+```
+
+## Diagrama de caixa (Boxplot)
+
+- Definição: Diagrama de Caixa, ou Boxplot, fornece um resumo visual rápido da variabilidade de valores em um conjunto de dados. Eles mostram os valores medianos, quartis superiores e inferiores, valores mínimo e máximo e quaisquer valores atípicos no conjunto de dados
+
+- Diagrama que representa idades de pessoas que já utilizaram ou não o método de ensino EaD
+
+```{r}
+
+library(ggplot2)
+
+tabela4 = select(tabela, "Q1", "Q2")
+
+ggplot(tabela4, aes(y = Q1, x = Q2, fill = Q2)) + geom_boxplot() + labs(title = "Idades de pessoas que já frequentaram ou não o EaD", y = "Idade em anos", x = "Já frequentou o EaD?") + scale_fill_brewer(palette = "Oranges") + theme_classic() + guides(fill = "none")
+
+
+```
+
+
+## Percentual de contribuição de cada membro do grupo
+
+- Bernardo Boé --> 100%
+- Ettore Coletti --> 100%
+- Leonardo Miri --> 100%
