@@ -1,0 +1,69 @@
+
+---
+title: "Aula 10 com dummies"
+author: "Cléber Figueiredo"
+date: "2023-11-14"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Exemplo 3
+
+O departamento de P&D  da LA ROCHE (INVENTADO, não faço ideia se eles intentam fazer isso), interessado em expandir sua  participação de mercado, abocanhando a nova CLASSE MÉDIA  brasileira, financiou um projeto para entender como os consumidores se posicionam frente ao consumo de protetores solares. 
+
+Para tanto, um brainstorming foi realizado para que o departamento chegasse a conclusão de quais atributos deveriam ser considerados na pesquisa. 
+
+O grupo, ao final do dia  elencou três possíveis concorrentes (AVON, NATURA e O BOTICÁRIO). 
+
+Concluiu que seria importante estudar a influência do preço na decisão de compra (sabem que essa nova CLASSE C não é fiel à marca) e estudar os dois produtos mais vendidos: com fator 30 de proteção (FPS 30) e 50 (FPS 50).
+
+```{r, include = FALSE}
+library(readxl)
+setwd("C:/Users/BERNARDO.CASTILLO/Documents/4oPeriodo/AnaliseExploratoria")
+dados <- read_excel("RegMulti.xlsx", sheet ="Exemplo3")
+dados$Marca = factor(dados$Marca, levels = c("O Boticário", "Avon", "Natura"))
+dados$FPS = factor(dados$FPS, levels = c("FPS 30", "FPS 50"))
+dados$Preço = factor(dados$Preço, levels = c(30,60,90))
+
+```
+
+A variável preferência é a resposta, vamos usar "O Boticário" como referÊncia de marca, fps 30 como referência para FPS e preço 30 para referência de preço.
+
+```{r, echo = FALSE}
+modelo = lm(Preferência ~ Marca + FPS + Preço, data = dados)
+resultado = summary(modelo)
+knitr::kable(round(resultado$coefficients,2), caption = "Resultados finais")
+
+```
+
+A equação aparece na coluna "estimate".
+
+Para marca:
+
+-3.17 é a diminuição média da preferência quando comparamos a marca Avon com a marca O Boticário, mantidas as outras  variáveis fixas.
+
+-1.50 é a diminuição média da preferência quando comparamos a marca Natura com a marca O Boticário.
+
+Conclusão: O Boticário foi a marca preferida.
+
+Para FPS:
+
+1.11 é o acréscimo médio dado à preferência, quando comparamos os FPS 50 com o FPS 30.
+
+Conclusão: O FPS 50 é preferido.
+
+Para preço:
+
+-2.17 é o decréscimo médio dado à preferência quando comparamos o preço 60 com o preço 30, ceteris paribus.
+
+-4.50 é o decréscimo médio dado à preferência quando comparamos o preço 90 com o preço 30, ceteris paribus.
+
+Conclusão: o preço baixo (30 reais) foi o preferido.
+
+Solução: produzir um protetor com o menor custo possível, maior fator de proteção e características semelhantes as da marca O Boticário.
+
+
+

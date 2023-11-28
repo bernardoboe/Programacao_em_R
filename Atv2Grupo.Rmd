@@ -1,0 +1,75 @@
+---
+title: "Atividade II"
+author: "Bernardo Boé, Ettore Coletti e Leonardo Miri"
+date: "2023-10-10"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+### Integrantes:
+
+- Bernardo Boé
+- Ettore Coletti
+- Leonardo Miri
+
+#### a) (2,0 pontos) Realizar um brainstorming entre os integrantes do grupo e escolher pelo menos quatro marcas do produto indicado para o seu grupo. Liste-as. Indicando pelo menos quatro pontos de paridade do produto indicado para o seu grupo. Esse pontos de paridade necessariamente são atributos do produto.
+
+##### R: Nosso grupo irá analisar o segmento de barras de cereal, com foco nas marcas: Trio, Nutry, Taeq e Joy. Após a escolha das marcas, identificamos alguns pontos de paridade como a base de cereais, variedade de sabores, ingredientes nuritivos , consistência compacta e aspectos saudáveis. 
+
+#### b)  (2,0 pontos) Construa um instrumento de coleta de dados com os atributos e as marcas que foram identificadas para o seu produto. O formulário a seguir é um exemplo: https://forms.gle/qixCZftgwaKvbUfk9Links to an external site.   Entregue o link que foi construído para a coleta de dados. Envie-o para pelo menos 15 pessoas que conhecem as marcas do produto do seu grupo.
+
+##### Formulário sobre barras de cereais
+####  ↓
+[Clique aqui!](https://docs.google.com/forms/d/e/1FAIpQLSdsHIr0iNCpW2iAuXjtMPsDxpBNoBziobiw0jQT5Lf5_lOVtw/viewform?usp=sf_link)
+
+
+#### c)  (2,0 pontos) Construa uma tabela com as médias que foram atribuídas para cada uma das marcas, conforme a avaliação de cada atributo.
+
+```{r, include=FALSE}
+
+dados = readxl::read_excel("DadosAtv2.xlsx")
+
+dados1 = data.frame(dados, row.names = 1)
+
+
+```
+
+## Escala de 1 a 7
+
+```{r, echo=FALSE}
+
+knitr::kable(dados1)
+
+```
+
+
+#### d)  (2,0 pontos) Use a tabela acima e realize um escalonamento multidimensional com toda a informação obtida. Apresente tanto o mapa de calor que mostra a distância das marcas em relação ao plano, quanto o mapa que indica o posicionamento das marcas em relação aos atributos avaliados.
+
+```{r, warning=FALSE, echo=FALSE, message=FALSE}
+
+library(readxl)
+library(factoextra)
+library(ggplot2)
+
+res.pca = prcomp(dados1)
+
+fviz_pca_ind(res.pca,
+             col.ind = "cos2",
+             gradient.cols = c("#00AF88", "#E7B800", "#FC4E07"),
+             repel = TRUE
+)
+
+fviz_pca_biplot(res.pca, repel = TRUE,
+                col.var = "#2E9FDF",
+                col.ind = "#FC4E07"
+)
+
+
+```
+
+
+#### e)  (2,0 pontos) Analise a solução. Indique o percentual que o mapa bidimensional conseguiu captar de explicação dos dados. Além disso, indique como as marcas escolhidas pelo grupo são percebidas em relação aos atributos identificados pelo grupo.
+
+#### R: O percentual que o mapa bidimensional construído consegue explicar é de, exatamente, 96,4% (79,9% + 16,5%). Sobre a percepção das marcas, a Joy é mais percebida por seus ingredientes de qualidade e baixa caloria, a Taeq por sabor, doçura e textura, enquanto a marca Nutry é mais percebida por sua variedade de produtos. Já a marca Trio não foi reconhecida significativamente por nenhuma das métricas analisadas, indicando que a amostra do formulário criado não considera essa marca muito relevante e, possivelmente, necessitaria de um novo posiocionamento de sua empresa.
